@@ -1,9 +1,11 @@
 import express from 'express'; // express 모듈 가져오기
 import authRouter from './routes/auth.router.js';
 import usersRouter from './routes/users.router.js';
+import { eduTest } from './app/middlewares/edu/edu.middleware.js';
 
 const app = express();
 app.use(express.json()); // JSON으로 요청이 올 경우 파싱 처리 
+app.use(eduTest); //커스텀 미들웨어 전역 등록
 
 // 클라이언트가 '/' 경로로 GET 요청을 보낼 때 실행되는 Router
 app.get('/', (request, response, next) => {
