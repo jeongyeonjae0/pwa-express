@@ -1,10 +1,16 @@
 import express from 'express'; // express 모듈 가져오기
+import authRouter from './routes/auth.router.js';
+import usersRouter from './routes/users.router.js';
 
 const app = express();
+app.use(express.json()); // JSON으로 요청이 올 경우 파싱 처리 
 
 // 클라이언트가 '/' 경로로 GET 요청을 보낼 때 실행되는 Router
 app.get('/', (request, response, next) => {
-  response.status(200).send('안녕 익스프레스!');
+  response.status(200).send({
+    code: '00',
+    msg:'안녕 익스프레스!',
+  });
 });
 
 // 클라이언트가 '/' 경로로 POST 요청을 보낼 때 실행되는 Router
@@ -42,6 +48,30 @@ app.get('/api/posts/:id', (request, response, next) => {
   console.log(typeof(postId));
   response.status(200).send(postId);
 });
+
+// JSON 요청 제어 
+// 'Request.body'를 통해서 접근 가능 (** express.json() 추가 필요 **)
+app.post('/api/posts', (request, response, next) => {
+  const {account, password, name} = request.body;
+  // const account = request.body.account;
+  // const password = request.body.password;
+  // const name = request.body.name;
+  response.status(200).send({account, password, name}); 
+
+  // response.status(200).send({
+  //   password: password
+  //   ,acoount: account
+  //   ,name: name
+  // });
+});
+
+// -------------
+// 라우트 그룹 
+// -------------
+// 라우트를 모듈로 나누고 그룹핑하여 관리 
+app.use('/api', authRouter);
+
+app.use('/api/users', usersRouter);
 
 // 대체 라우트 (모든 라우터 중에 가장 마지막에 작성)
 // app.use((request, response, next) => {
