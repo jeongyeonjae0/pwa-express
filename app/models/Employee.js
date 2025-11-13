@@ -102,7 +102,7 @@ const attributes = {
     field: 'deleted_at',
     type: DataTypes.DATE,
     allowNull: true,
-    defaultValue: false,
+    defaultValue: null,
     comeent: '삭제일',
     get() {
       const val = this.getDataValue('deletedAt'); 

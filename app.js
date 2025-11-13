@@ -3,6 +3,7 @@ import authRouter from './routes/auth.router.js';
 import usersRouter from './routes/users.router.js';
 import { eduTest, eduUsersTest } from './app/middlewares/edu/edu.middleware.js';
 import { errorHandler } from './app/middlewares/errors/error-handler.js';
+import eduRouter from './routes/edu.router.js';
 
 const app = express();
 app.use(express.json()); // JSON으로 요청이 올 경우 파싱 처리 
@@ -74,6 +75,7 @@ app.post('/api/posts', (request, response, next) => {
 // 라우트를 모듈로 나누고 그룹핑하여 관리 
 app.use('/api', authRouter);
 app.use('/api/users', eduUsersTest ,usersRouter);
+app.use(eduRouter);
 
 // 에러 테스트용 라우터 
 app.get('/error', (reqeust, response, next) => {
@@ -105,6 +107,4 @@ app.use((request, response, next) => {
 app.use(errorHandler);
 
 // 서버를 주어진 포트에서 시작
-app.listen(3000, () => {
-  console.log(`3000포트에서 리스닝`);
-});
+app.listen(3000);
