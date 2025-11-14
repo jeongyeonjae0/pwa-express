@@ -2,7 +2,7 @@ import express from 'express';
 import db from '../app/models/index.js'
 import { Op, Sequelize } from 'sequelize';
 import dayjs from 'dayjs';
-const { sequelize, Employee } = db;
+const { sequelize, Employee, TitleEmp, Title } = db;
 
 const eduRouter = express.Router();
 
@@ -215,13 +215,43 @@ eduRouter.get('/api/edu', async (request, response, next) => {
     // });
 
     // groupby, having 
-    result = await Employee.findAll({
-      attributes: [
-        'gender'
-        , [sequelize.fn('COUNT', sequelize.col('*')), "cnt_gender"]
+    // result = await Employee.findAll({
+    //   attributes: [
+    //     'gender'
+    //     , [sequelize.fn('COUNT', sequelize.col('*')), "cnt_gender"]
+    //   ],
+    //   group: ['gender'],
+    //   having: sequelize.literal('cnt_gender >= 40000'),
+    // });
+
+    // join
+    result = await Employee.findOne({
+      attributes: ['empId', 'name'],
+      where: {
+        empId: 1
+      },
+      include: [
+        {
+          model: TitleEmp, // 내가 연결할 모델
+          as: 'titleEmps', // 내가 사용할 관계
+          required: true, // `true`면 Inner join, `false`면 Left Outer Join 
+          attributes: ['titleCode'],
+          where: {
+            endAt: {
+              [Op.is]: null,
+            }
+          },
+          include: [
+            {
+              model: Title,
+              as: 'title',
+              // association: 'title',
+              required: true,
+              attributes: ['title'],
+            }
+          ],
+        }
       ],
-      group: ['gender'],
-      having: sequelize.literal('cnt_gender >= 40000'),
     });
 
     return response.status(200).send({
